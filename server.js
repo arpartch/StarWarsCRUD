@@ -7,13 +7,20 @@ const app = express();
 const MongoClient = require('mongodb').MongoClient;
 
 
-const uri = "mongodb+srv://yoda:Thisisit4!@cluster0.kqa1w.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const connectionString = process.env.DB_URL
 
-app.set('view engine', 'ejs')
+MongoClient.connect('mongodb+srv://yoda:Thisisit4!@cluster0.kqa1w.mongodb.net/CRUDwars?retryWrites=true&w=majority', { useUnifiedTopology: true })
+  .then(client => {
+    console.log('Connected to Database')
+    const db = client.db('star-wars-quotes')
+    const quotesCollection = db.collection('quotes')
+
+    // Middlewares
+    app.set('view engine', 'ejs')
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use(bodyParser.json())
     app.use(express.static('public'))
+
 
 client.connect(err => {
   const collection = client.db("test").collection("devices");
@@ -38,4 +45,4 @@ app.post('/quotes', (req, res) => {
 
 app.listen(3000, function () {
     console.log('listening on 3000')
-});
+})
